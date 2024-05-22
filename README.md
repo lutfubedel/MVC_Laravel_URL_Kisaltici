@@ -170,9 +170,9 @@ Bu proje, Laravel framework kullanarak geliştirilmiş bir URL kısaltma uygulam
 
     ```
 8. URL Doğrulama ve Yönlendirme
-    URL'in geçerli olup olmadığını kontrol etmek için Laravel'in `validate` metodu kullanılır.
-    Kısa URL'in benzersiz olup olmadığını kontrol etmek için `Str::random` fonksiyonu ile 12 karakterli rastgele bir dize oluşturulur.
-    Kısa URL'e girildiğinde orijinal URL'e yönlendirme yapılır.
+    - URL'in geçerli olup olmadığını kontrol etmek için Laravel'in `validate` metodu kullanılır.
+    - Kısa URL'in benzersiz olup olmadığını kontrol etmek için `Str::random` fonksiyonu ile 12 karakterli rastgele bir dize oluşturulur.
+    - Kısa URL'e girildiğinde orijinal URL'e yönlendirme yapılır.
 
 9. Projeyi Çalıştırma
     Son olarak projeyi çalıştırın:
