@@ -27,12 +27,12 @@ Bu proje, Laravel framework kullanarak geliştirilmiş bir URL kısaltma uygulam
 2. Bağımlılıkları yükleyin:
 
     ```bash
-    composer install
+    composer create-project --prefer-dist laravel/laravel url-shortener
     ```
 
-3. Ortam değişkenlerinizi ayarlayın:
+3.Veritabanı Ayarları:
 
-    `.env.example` dosyasını `.env` olarak kopyalayın ve veritabanı ayarlarını güncelleyin:
+   `url-shortener`  projesine geçin ve `.env` dosyasındaki veritabanı ayarlarını yapın:
 
     ```env
     DB_CONNECTION=mysql
@@ -43,26 +43,142 @@ Bu proje, Laravel framework kullanarak geliştirilmiş bir URL kısaltma uygulam
     DB_PASSWORD=
     ```
 
-4. Uygulama anahtarını oluşturun:
-
+4. Migration ve Model Oluşturma:
+    URL'leri saklamak için bir  `urls` tablosu oluşturun:
     ```bash
-    php artisan key:generate
+    php artisan make:model Url -m
     ```
-
-5. Veritabanı migrasyonlarını çalıştırın:
-
-    ```bash
+    `database/migrations/{timestamp}_create_urls_table.php` dosyasını şu şekilde düzenleyin:
+     ```bash
+    public function up()
+    {
+        Schema::create('urls', function (Blueprint $table) {
+            $table->id();
+            $table->string('original_url');
+            $table->string('short_url')->unique();
+            $table->timestamps();
+        });
+    }
+    ```
+    Migrasyonları çalıştırın:
+   ```bash
     php artisan migrate
     ```
+   
+6. Route ve Controller Oluşturma
+    URL kısaltma işlemleri için bir `UrlController` oluşturun:
+    ```bash
+    php artisan make:controller UrlController
+    ```
+    `routes/web.php` dosyasını şu şekilde düzenleyin:
+    ```bash
+    use App\Http\Controllers\UrlController;
 
-6. Geliştirme sunucusunu başlatın:
+    Route::get('/', [UrlController::class, 'index']);
+    Route::post('/shorten', [UrlController::class, 'shorten'])->name('shorten');
+    Route::get('/{shortUrl}', [UrlController::class, 'redirect']);
 
+    ```
+
+7. Controller İşlemleri
+    `UrlController` içinde fonksiyonları tanımlayın:
+    ```bash
+    namespace App\Http\Controllers;
+
+    use Illuminate\Http\Request;
+    use App\Models\Url;
+    use Illuminate\Support\Str;
+    
+    class UrlController extends Controller
+    {
+        public function index()
+        {
+            return view('welcome');
+        }
+    
+        public function shorten(Request $request)
+        {
+            $request->validate([
+                'url' => 'required|url'
+            ]);
+    
+            $originalUrl = $request->input('url');
+            $url = Url::where('original_url', $originalUrl)->first();
+    
+            if ($url) {
+                return redirect('/')->with('short_url', url($url->short_url));
+            }
+    
+            $shortUrl = $this->generateUniqueShortUrl();
+    
+            Url::create([
+                'original_url' => $originalUrl,
+                'short_url' => $shortUrl
+            ]);
+    
+            return redirect('/')->with('short_url', url($shortUrl));
+        }
+    
+        public function redirect($shortUrl)
+        {
+            $url = Url::where('short_url', $shortUrl)->firstOrFail();
+            return redirect($url->original_url);
+        }
+    
+        private function generateUniqueShortUrl()
+        {
+            do {
+                $shortUrl = Str::random(12);
+            } while (Url::where('short_url', $shortUrl)->exists());
+    
+            return $shortUrl;
+        }
+    }
+
+    ```
+
+8. View Oluşturma
+   `resources/views/welcome.blade.php` dosyasını oluşturun:
+   ```bash
+   <!DOCTYPE html>
+    <html>
+    <head>
+        <title>URL Kısaltma</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    </head>
+    <body>
+        <div class="flex items-center justify-center h-screen">
+            <div class="text-center">
+                <h1 class="text-3xl mb-6">URL Kısaltma Uygulaması</h1>
+                @if (session('short_url'))
+                    <div class="mb-6">
+                        <a href="{{ session('short_url') }}" class="text-blue-500">{{ session('short_url') }}</a>
+                    </div>
+                @endif
+                <form method="POST" action="{{ route('shorten') }}">
+                    @csrf
+                    <input type="text" name="url" class="border p-2 mb-4 w-full" placeholder="Uzun URL'i buraya yapıştırın">
+                    @error('url')
+                        <div class="text-red-500 mb-4">{{ $message }}</div>
+                    @enderror
+                    <button type="submit" class="bg-blue-500 text-white p-2 w-full">Kısalt</button>
+                </form>
+            </div>
+        </div>
+    </body>
+    </html>
+
+    ```
+9. URL Doğrulama ve Yönlendirme
+    URL'in geçerli olup olmadığını kontrol etmek için Laravel'in `validate` metodu kullanılır.
+    Kısa URL'in benzersiz olup olmadığını kontrol etmek için `Str::random` fonksiyonu ile 12 karakterli rastgele bir dize oluşturulur.
+    Kısa URL'e girildiğinde orijinal URL'e yönlendirme yapılır.
+
+10. Projeyi Çalıştırma
+    Son olarak projeyi çalıştırın:
     ```bash
     php artisan serve
     ```
-
-7. Tarayıcınızı açın ve `http://localhost:8000` adresini ziyaret edin.
-
 ## Kullanım
 
 1. Ana sayfada, uzun bir URL'i metin giriş alanına yapıştırın.
