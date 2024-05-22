@@ -21,7 +21,7 @@ Bu proje, Laravel framework kullanarak geliştirilmiş bir URL kısaltma uygulam
 
     ```bash
     git clone https://github.com/lutfubedel/MVC_Laravel_URL_Kisaltici.git
-    cd url_shortener
+    cd MVC_Laravel_URL_Kisaltici
     ```
 
 2. Bağımlılıkları yükleyin:
