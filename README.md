@@ -30,7 +30,7 @@ Bu proje, Laravel framework kullanarak geliştirilmiş bir URL kısaltma uygulam
     composer create-project --prefer-dist laravel/laravel url-shortener
     ```
 
-3.Veritabanı Ayarları:
+3. Veritabanı Ayarları:
 
    `url-shortener`  projesine geçin ve `.env` dosyasındaki veritabanı ayarlarını yapın:
 
