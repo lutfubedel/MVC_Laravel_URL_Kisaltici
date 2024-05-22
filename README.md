@@ -65,7 +65,7 @@ Bu proje, Laravel framework kullanarak geliştirilmiş bir URL kısaltma uygulam
     php artisan migrate
     ```
    
-6. Route ve Controller Oluşturma
+5. Route ve Controller Oluşturma
     URL kısaltma işlemleri için bir `UrlController` oluşturun:
     ```bash
     php artisan make:controller UrlController
@@ -80,7 +80,7 @@ Bu proje, Laravel framework kullanarak geliştirilmiş bir URL kısaltma uygulam
 
     ```
 
-7. Controller İşlemleri
+6. Controller İşlemleri
     `UrlController` içinde fonksiyonları tanımlayın:
     ```bash
     namespace App\Http\Controllers;
@@ -137,7 +137,7 @@ Bu proje, Laravel framework kullanarak geliştirilmiş bir URL kısaltma uygulam
 
     ```
 
-8. View Oluşturma
+7. View Oluşturma
    `resources/views/welcome.blade.php` dosyasını oluşturun:
    ```bash
    <!DOCTYPE html>
@@ -169,12 +169,12 @@ Bu proje, Laravel framework kullanarak geliştirilmiş bir URL kısaltma uygulam
     </html>
 
     ```
-9. URL Doğrulama ve Yönlendirme
+8. URL Doğrulama ve Yönlendirme
     URL'in geçerli olup olmadığını kontrol etmek için Laravel'in `validate` metodu kullanılır.
     Kısa URL'in benzersiz olup olmadığını kontrol etmek için `Str::random` fonksiyonu ile 12 karakterli rastgele bir dize oluşturulur.
     Kısa URL'e girildiğinde orijinal URL'e yönlendirme yapılır.
 
-10. Projeyi Çalıştırma
+9. Projeyi Çalıştırma
     Son olarak projeyi çalıştırın:
     ```bash
     php artisan serve
